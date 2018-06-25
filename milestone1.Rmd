@@ -1,0 +1,57 @@
+---
+title: "DS-Capstone-Milestone1"
+author: "Pat O'Keeffe"
+date: "25/6/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(corpus)
+library(caret)
+library(gsubfn)
+library(stopwords)
+setwd('~/data-science-capstone/')
+```
+
+## This is the first milestone for the data science capstone project.
+
+The goal of this milestone report is to do the following:
+1. Demonstrate download of the data and load into data structures within R.
+2. Provide some summary statistics about the data that is downloaded.
+3. Report some interesting findings so far.
+4. Describe plans for creating a prediction algorithm and a Shiny app.
+
+### Download of the data.
+
+The data was downloaded from the swiftkey in a zip file and extracted to a data directory within the working directory. 
+The following code is used to load the data of each file into a dataframe.
+
+```{r data-load}
+twitter <- readLines('data/en_US/en_US.twitter.txt')
+news <- readLines('data/en_US/en_US.news.txt')
+blogs <- readLines('data/en_US/en_US.blogs.txt')
+blogs_cp <- scan(file='data/en_US/en_US.blogs.txt',sep='\n',what='char',quote='')
+```
+
+### Summary Statistics about the data downloaded.
+
+Here we will do a frequency distribution of the words in the twitter feed. I also created a stop list of words that should be excluded from the frequency. Also remove words that only occur once and finally provide a plot distribution of the top 100 words.
+
+```{r frequency, echo=FALSE}
+blogs_cp <- tolower(blogs_cp)
+words.list <- strsplit(blogs_cp,'\\W+')
+words.vector <- unlist(words.list)
+
+#Create a stop list of uninteresting words
+stop.list <- c('the','a','of','and','is','be','are')
+words.vector2 <- words.vector[!words.vector%in%stop.list]
+freq.list <- table(words.vector2)
+sorted.freq.list <- sort(freq.list,decreasing = T)
+
+#remove hapax legomena (words that occur only once in the corpora)
+sorted.freq.list <- sorted.freq.list[sorted.freq.list>1] 
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
