@@ -5,12 +5,13 @@ date: "25/6/2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(corpus)
-library(caret)
 library(gsubfn)
 library(stopwords)
+library(ggplot2)
+library(corpus)
+
 setwd('~/data-science-capstone/')
 ```
 
@@ -27,20 +28,21 @@ The goal of this milestone report is to do the following:
 The data was downloaded from the swiftkey in a zip file and extracted to a data directory within the working directory. 
 The following code is used to load the data of each file into a dataframe.
 
-```{r data-load}
-twitter <- readLines('data/en_US/en_US.twitter.txt')
+```{r data-load, warning=FALSE, message=FALSE }
+twitter <- scan(file='data/en_US/en_US.twitter.txt',sep='\n',what='char',quote='')
 news <- readLines('data/en_US/en_US.news.txt')
 blogs <- readLines('data/en_US/en_US.blogs.txt')
-blogs_cp <- scan(file='data/en_US/en_US.blogs.txt',sep='\n',what='char',quote='')
 ```
 
 ### Summary Statistics about the data downloaded.
 
 Here we will do a frequency distribution of the words in the twitter feed. I also created a stop list of words that should be excluded from the frequency. Also remove words that only occur once and finally provide a plot distribution of the top 100 words.
 
-```{r frequency, echo=FALSE}
-blogs_cp <- tolower(blogs_cp)
-words.list <- strsplit(blogs_cp,'\\W+')
+In this example I do not use a
+
+```{r twitter-analytics, warning=FALSE, message=FALSE}
+
+words.list <- strsplit(twitter,'\\W+')
 words.vector <- unlist(words.list)
 
 #Create a stop list of uninteresting words
@@ -52,6 +54,44 @@ sorted.freq.list <- sort(freq.list,decreasing = T)
 #remove hapax legomena (words that occur only once in the corpora)
 sorted.freq.list <- sorted.freq.list[sorted.freq.list>1] 
 
+word.df <- as.data.frame(sorted.freq.list[1:20])
+require(scales)
+g <- ggplot (word.df, aes(x=words.vector2,y=Freq)) + 
+  geom_bar(stat='identity') + 
+  scale_y_continuous(labels = comma)
+g
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Now we will do some analysis of the sentence length of the news corpora. We can see from the following that the distribution of sentence length is gaussian. To clean the data I removed sentences greater than 100 tokens and less than 3 tokens in length.
+
+```{r blog-analytics, warning=FALSE, message=FALSE}
+blogs.sentences <- text_split(blogs,units = "sentence")
+blogs.sentences.freq <- text_ntoken(blogs.sentences)
+blogs.sentences.freq <- blogs.sentences.freq[!(blogs.sentences.freq>100)]  
+blogs.sentences.freq <- blogs.sentences.freq[!(blogs.sentences.freq<3)]  
+gdf <- as.data.frame(blogs.sentences.freq)
+g <- ggplot (gdf,aes(x=gdf$blogs.sentences.freq)) + 
+    geom_histogram(aes(y=..density..), binwidth = 0.5) +
+    geom_density(alpha = .2, fill = '#FF6666') +
+    labs(x='Sentence Length',y='Dist. Density') +
+    ggtitle('Distribution of Blog Sentence Length')
+g
+```
+
+Finally we will do some analysis of 3-gram data in the news dataset. The following outlines the top 50 3-gram texts from the news corpura.
+
+```{r news-analytics, warning=FALSE, message=FALSE}
+news.words <- text_split(news,units = 'token')
+term_stats(news,ngrams=3,max_count = 50,filter = text_filter(drop_punct=TRUE))
+```
+
+### Learnings from Analysis so far.
+
+R provides lots of powerful tools to analyse corpora text. 
+
+
+### Plans and next steps...
+
+Next steps is to build a predictive text mining model, identify the right modeling techniques which will perform as efficiently as possible and provide a flexible UI in the form of a Shiny App.
+
