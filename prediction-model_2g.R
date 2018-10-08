@@ -5,6 +5,7 @@ library(tm)
 library(RWeka)
 library(stringr)
 library(Matrix)
+library(utf8)
 
 setwd('d:/dev/Coursera/Capstone/NLP Project/')
 file_src <- DirSource (directory = 'd:/dev/Coursera/Capstone/NLP Project/data/en_US/')
@@ -14,9 +15,11 @@ file_src <- DirSource (directory = 'd:/dev/Coursera/Capstone/NLP Project/data/en
 Tokenizer_2g <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
 Tokenizer_3g <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
 Tokenizer_4g <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4))
+ngtokenizer <- function(x) ngram_asweka(x, min = 2, max = 2)
 
 corp <- VCorpus(file_src,readerControl = list(
   reader = readPlain,
+  encoding = "UTF-8",
   language = 'en_US',
   load = 'false',
   dbcontrol = list (
@@ -73,15 +76,30 @@ if (file.exists('/data/quad_dtm_sparse.data')) {
 }
 
 # Clean up the term list from the doc term matrix and generate ngram vectors
-term_vals <- trimws(bi_dtm$dimnames$Terms[grepl('^[A-Za-z]',bi_dtm$dimnames$Terms)])
+term_vals_2g <- trimws(bi_dtm$dimnames$Terms[grepl('^[A-Za-z]',bi_dtm$dimnames$Terms)])
 ngram_1g <- term_vals[str_count(term_vals, "\\w+") == 1]
 ngram_2g <- term_vals[str_count(term_vals, "\\w+") == 2]
+str_replace_all(ngram_2g, "[œâ€™]", "")
+str_replace_all(ngram_2g, "[œâ€™]", "")
+
+term_vals_3g <- trimws(tri_dtm$dimnames$Terms[grepl('^[A-Za-z] [A-Za-z]',tri_dtm$dimnames$Terms)])
 ngram_3g <- term_vals[str_count(term_vals, "\\w+") == 3]
-ngram_4g <- term_vals[str_count(term_vals, "\\w+") == 4]
+str_replace_all(ngram_3g, "[œâ€™]", "")
 
 
 # Handle prediction
 testString <- 'absolutely'
+
+if (str_length(testString) == 1) {
+    target_matrix <- ngram_2g
+} else if (str_length(testString == 2)) {
+    
+} else if (str_length(testString == 3)) {
+    
+} else {
+    
+}
+
 grepString <- paste('^',testString,' ', sep = '')
 options <- colSums(inspect(bi_dtm[,grep(grepString, ngram_2g, value=T)]))
 recommendations <- sort(options, decreasing = TRUE)
