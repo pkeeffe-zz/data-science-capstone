@@ -7,6 +7,8 @@ BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
 TrigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
 FullTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 4))
 
+setwd('d:/dev/Coursera/Capstone/NLP Project/')
+
 #file_src <- DirSource (directory = '~/data-science-capstone/data/en_US/')
 file_src <- DirSource (directory = 'd:/dev/Coursera/Capstone/NLP Project/data-min/')
 
@@ -59,8 +61,7 @@ for (i in c(1:i_len)) {
     }
 }
 
-write.csv2(freq_prob_matrix_1g,file='~/freq_prob_matrix_1g.csv')
-
+write.csv2(freq_prob_matrix_1g,file='freq_prob_matrix_1g.csv')
 
 
 

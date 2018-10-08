@@ -42,8 +42,8 @@ row_vals_1g <- row_vals[str_count(row_vals, "\\w+") == 1]
 row_vals_2g <- row_vals[str_count(row_vals, "\\w+") == 2]
 row_vals_3g <- row_vals[str_count(row_vals, "\\w+") == 3]
 
-freq_prob_matrix_1g <- matrix(NA,ncol=length(row_vals_1g), nrow = length(row_vals_1g))
-dimnames(freq_prob_matrix_1g) <- list(row_vals_1g,row_vals_1g)
+freq_prob_matrix_3g <- matrix(NA,ncol=length(row_vals_1g), nrow = length(row_vals_2g))
+dimnames(freq_prob_matrix_1g) <- list(row_vals_1g,row_vals_2g)
 
 i_len <- length(row_vals_1g)
 j_len <- length(row_vals_1g)   
@@ -53,13 +53,57 @@ j <- 1;
 for (i in c(1:i_len)) {
     for (j in c(1:j_len)){
         cur_sentence <- trimws(paste (row_vals_1g[i],row_vals_1g[j]))
-        if (cur_sentence %in% row_vals_2g) {
-        freq_prob_matrix_1g[i,j] <- sum(bi_dtm[1:3,cur_sentence])/length(row_vals_2g)
+        if (cur_sentence %in% row_vals_3g) {
+            freq_prob_matrix_1g[i,j] <- sum(bi_dtm[1:3,cur_sentence])/length(row_vals_2g)
         }
     }
 }
 
 write.csv2(freq_prob_matrix_1g,file='~/freq_prob_matrix_1g.csv')
+
+
+
+
+
+
+
+
+
+freq_prob_matrix_2g <- matrix(NA,ncol=length(row_vals_1g), nrow = length(row_vals_2g))
+dimnames(freq_prob_matrix_1g) <- list(row_vals_1g,row_vals_2g)
+
+i_len <- length(row_vals_1g)
+j_len <- length(row_vals_1g)   
+i <- 1;
+j <- 1;
+
+for (i in c(1:i_len)) {
+    for (j in c(1:j_len)){
+        cur_sentence <- trimws(paste (row_vals_g[i],row_vals_1g[j]))
+        if (cur_sentence %in% row_vals_2g) {
+            freq_prob_matrix_1g[i,j] <- sum(bi_dtm[1:3,cur_sentence])/length(row_vals_2g)
+        }
+    }
+}
+
+write.csv2(freq_prob_matrix_1g,file='~/freq_prob_matrix_1g.csv')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
