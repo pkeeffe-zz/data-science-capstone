@@ -27,15 +27,16 @@ corp <- VCorpus(file_src,readerControl = list(
 ))
 
 # Clean the corpus of punctuation, white space and numbers (not used for text prediction)
-#corp <- tm_map(corp,removePunctuation)
+corp <- tm_map(corp,removePunctuation)
 corp <- tm_map(corp,stripWhitespace)
 corp <- tm_map(corp,removeNumbers)
 
 dtm_2g <- DocumentTermMatrix(corp, control =list(
   tokenize = dtm_2gTokenizer,
   tolower = TRUE,
-  weighting = function(x) weightTf(x)
+  weighting = function(x) weightTfIdf(x, normalize = TRUE)
 ))
+
 saveRDS(dtm_2g, file = 'data/dtm_2g_large.data')
 dtm_2g <- removeSparseTerms(dtm_2g,0.2)
 saveRDS(dtm_2g, file = 'data/dtm_2g_sparse.data')

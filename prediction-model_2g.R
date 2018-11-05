@@ -14,8 +14,10 @@ file_src <- DirSource (directory = 'd:/dev/Coursera/Capstone/NLP Project/data/en
 # Generate the Corpus and associated document term matrix for everything up to 4-gram
 Tokenizer_2g <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
 Tokenizer_3g <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
-Tokenizer_4g <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4))
+Tokenizer_4g <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 4))
 ngtokenizer <- function(x) ngram_asweka(x, min = 2, max = 2)
+
+
 
 corp <- VCorpus(file_src,readerControl = list(
   reader = readPlain,
@@ -79,31 +81,47 @@ if (file.exists('/data/quad_dtm_sparse.data')) {
 term_vals_2g <- trimws(bi_dtm$dimnames$Terms[grepl('^[A-Za-z]',bi_dtm$dimnames$Terms)])
 ngram_1g <- term_vals[str_count(term_vals, "\\w+") == 1]
 ngram_2g <- term_vals[str_count(term_vals, "\\w+") == 2]
-str_replace_all(ngram_2g, "[œâ€™]", "")
-str_replace_all(ngram_2g, "[œâ€™]", "")
+ngram_2g <- str_replace_all(ngram_2g, "[œâ€™]", "")
 
 term_vals_3g <- trimws(tri_dtm$dimnames$Terms[grepl('^[A-Za-z] [A-Za-z]',tri_dtm$dimnames$Terms)])
 ngram_3g <- term_vals[str_count(term_vals, "\\w+") == 3]
-str_replace_all(ngram_3g, "[œâ€™]", "")
+ngram_3g <- str_replace_all(ngram_3g, "[œâ€™]", "")
+
+predict <- function (sentence) {
+    
+    sentence <- 'hello'
+    words <- str_split(sentence, ' ')
+
+    # Get the last 2 words of the sentence if the length is greater than 2
+    if (str_length(sentence) >= 2) {
+        len <- length(words[[1]])
+        sentence <- trimws(paste(words[[1]][len-1],words[[1]][len]))
+    }
+    
+    # Create a grep of the string to search for in the document term matrix
+    grepString <- paste('^',sentence,' ', sep = '')
+    if (str_length(sentence) == 1) {
+        options <- colSums(inspect(bi_dtm[,grep(grepString, ngram_2g, value=T)]))   
+    } else if (str_length(sentence == 2)) {
+        options <- colSums(inspect(tri_dtm[,grep(grepString, ngram_3g, value=T)]))
+    }
+    
+    recommendations <- sort(options, decreasing = TRUE)
+    
+    if (is.na(recommendations[1])) {
+        return(names(recommendations[1:3]))
+    } else {     # run predict recursively on each string until null
+        predict (paste())
+    }
+    
+}    
+
 
 
 # Handle prediction
 testString <- 'absolutely'
-
-if (str_length(testString) == 1) {
-    target_matrix <- ngram_2g
-} else if (str_length(testString == 2)) {
-    
-} else if (str_length(testString == 3)) {
-    
-} else {
-    
-}
-
-grepString <- paste('^',testString,' ', sep = '')
-options <- colSums(inspect(bi_dtm[,grep(grepString, ngram_2g, value=T)]))
-recommendations <- sort(options, decreasing = TRUE)
-names(recommendations[1:3])
+prediction <- predict(testString)
+prediction
 
 
 prob_matrix_col_count <- length(ngram_1g)
