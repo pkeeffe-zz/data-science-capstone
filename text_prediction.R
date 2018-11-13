@@ -3,16 +3,17 @@ options(java.parameters = "-Xmx12288m")
 library(tm)
 library(RWeka)
 library(stringr)
-library(Matrix)
 
-setwd('~/data-science-capstone/')
+#setwd('~/data-science-capstone/')
+setwd('d:/dev/Coursera/Capstone/NLP Project/')
+
 dtm_2g <- readRDS('data/dtm_2g_sparse.data')
 dtm_3g <- readRDS('data/dtm_3g_sparse.data')
 dtm_4g <- readRDS('data/dtm_4g_sparse.data')
 dtm_5g <- readRDS('data/dtm_5g_sparse.data')
 dtm_6g <- readRDS('data/dtm_6g_sparse.data')
 
-dtm_2g_large <- readRDS('data/dtm_2g_large.rds')
+dtm_2g <- readRDS('data/dtm_2g_large.data')
 dtm_3g <- readRDS('data/dtm_3g_large.data')
 dtm_4g <- readRDS('data/dtm_4g_large.data')
 dtm_5g <- readRDS('data/dtm_5g_large.data')
@@ -47,6 +48,11 @@ pred <- function(inputstring) {
     return(names(options[1:3])) 
   }
 }
+
+
+
+
+
 
 
 

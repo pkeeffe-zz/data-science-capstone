@@ -37,8 +37,9 @@ dtm_2g <- DocumentTermMatrix(corp, control =list(
   weighting = function(x) weightTfIdf(x, normalize = TRUE)
 ))
 
+
 saveRDS(dtm_2g, file = 'data/dtm_2g_large.data')
-dtm_2g <- removeSparseTerms(dtm_2g,0.2)
+dtm_2g <- removeSparseTerms(dtm_2g,0.95)
 saveRDS(dtm_2g, file = 'data/dtm_2g_sparse.data')
 
 dtm_3g <- DocumentTermMatrix(corp, control =list(
