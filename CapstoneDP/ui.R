@@ -13,21 +13,21 @@ library(shiny)
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("Data Science Capstone - Text Predictor"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-       sliderInput("bins",
-                   "Number of bins:",
-                   min = 1,
-                   max = 50,
-                   value = 30)
+       textInput("text", 
+                 h3("Enter sentence here..."), 
+                value = ""),
+       actionButton("predict", "Predict next word")
     ),
     
     # Show a plot of the generated distribution
     mainPanel(
-       plotOutput("distPlot")
+        h3("Here are your next word predictions..."), # title with HTML helper
+        textOutput("predictedWord")
     )
   )
 ))

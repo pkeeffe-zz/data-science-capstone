@@ -8,9 +8,7 @@ setwd('d:/dev/Coursera/Capstone/NLP Project')
 twitter <- readLines('data/en_US/en_US.twitter.txt')
 news <- readLines('data/en_US/en_US.news.txt')
 blogs <- readLines('data/en_US/en_US.blogs.txt')
-
 corp <- corpus(c(twitter,news,blogs))
-
 corp_sample <- corpus_sample(corp,size=1000000)
 
 my_dfm <- dfm(corp)
